@@ -1,3 +1,8 @@
+#VisualStudioCode
+.vscode
+
+public/game.js
+
 # Logs
 logs
 *.log
