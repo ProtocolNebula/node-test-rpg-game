@@ -20,32 +20,28 @@ class Game {
      * El servidor o el cliente pueden requerir algunas acciones adicionales
      */
     logic() {
-        console.log("parent logic")
-
         // Calculamos el timepo delta (el que ha pasado entre ahora y el ultimo refresco)
         const now = Date.now()
         const delta = now - this.lastLogic
         this.lastLogic = now
 
-        // Calculamos el incremento de la velocidad segun delta
-        const vInc = Conf.ACCEL * delta
-
         // Ejecutamos la logica de los jugadores
-        this.logicFor(this.players)
+        this.logicFor(this.players, Conf.ACCEL * delta)
 
         // Ejecutamos la logica de los mobs
-        this.logicFor(this.mobs)
+        this.logicFor(this.mobs, CONF.MOB_ACCEL * delta)
     }
 
     /**
      * Ejecuta la logica de assets genericos (jugadores, mobs...)
      * @param Asset[] listItems Listado de assets a ejecutar su logica
+     * @param numeric vInc incremento del elemento en el desplazamiento (opcional)
      */
-    logicFor(listItems) {
+    logicFor(listItems, vInc) {
         if (listItems.lenght > 0) {
             for (let id in listItems) {
                 const asset = listItems[id]
-                asset.logic()
+                asset.logic(delta, vInc)
             }
         }
     }

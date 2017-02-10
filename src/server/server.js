@@ -4,10 +4,14 @@ const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const path = require('path')
 const GameServer = require('./GameServer.js')
-const conf = require('./../config.js')
+const serverConf = require('./serverConfig.js')
 
 // Servimos archivos solcitados que se encuentren en public
 app.use(express.static('public'))
+
+app.get('/:gameId', function (req, res) {
+  res.sendFile(path.join(__dirname, '/../public/index.html'))
+})
 
 // Lista con las salas de juegos
 const games = {}
@@ -15,55 +19,73 @@ const games = {}
 // Sala asignada a cada jugador
 const gameForPlayer = {} // socket.id => game
 
-// Preparamos la gestion de los sockets
-// TODO: Extraer a otro archivo
-io.on('connection', function() {
+/*
+ * HOOKS DEL SOCKET
+ */
+// Hook de asignacion de sala
+function onJoinRoom(room) {
+  const socket = this
+  let game = games[room]
+
+  if (game == null) {
+    // Creamos una sala nueva
+    game = new GameServer(io, room)
+    games[room] = game
+  }
+
+  // Vinculamos la sala al jugador
+  gameForPlayer[socket.id] = game
+  game.onPlayerConnected(socket)
+}
+
+/**
+ * Recibimos una peticion ping del cliente y devolvemos un pong
+ */
+function onGamePing() {
+  const socket = this
+  socket.emit('game:pong', Date.now())
+}
+
+/**
+ * Movimiento del jugador
+ */
+function onPlayerMove() {
+  const socket = this
+  const game = gameForPlayer[socket.id]
+  if (game != null) game.onPlayerMoved(socket, inputs)
+}
+
+/**
+ * Desconexion del jugador
+ */
+function onDisconnect() {
+  const socket = this
+  const game = gameForPlayer[socket.id]
+  if (game != null) game.onPlayerDisconnected(socket)
+}
+
+// Escuchas del socket
+io.on('connection', function (socket) {
     // El jugador solicita entrar a una sala
-    socket.on('joinRoom', (room) => {
-        let game = games[room]
-        
-        if (game == null) {
-            // Creamos una sala nueva
-            game = new GameServer(io, room)
-            games[room] = game
-        }
-
-        // Vinculamos la sala al jugador
-        gameForPlayer[socket.id] = game
-        game.onPlayerConnected(socket)
-    })
-
-    // Controles de ping
-    socket.on("game:ping", () => {
-        // Enviamos un ping al cliente
-        socket.emit('game:pong', Date.now())
-    })
-    socket.on('game:pung', () => {
+  socket.on('joinRoom', onJoinRoom)
+  socket.on('game:ping', onGamePing)
+  /*socket.on('game:pung', () => {
         // Recibimos el "pong" del cliente
-    })
-
-    // Recibimos alguna accion del jugador 
-    socket.on('action', (inputs) => {
-        const game = gameForPlayer[socket.id]
-        if (game != null) game.onPlayerAction(socket, inputs)
-    })
-
-    // Desconectamos un jugador
-    socket.on('disconnect', () => {
-        const game = gameForPlayer[socket.id]
-        if (game != null) game.onPlayerDisconnected(socket)
-    })
+  })*/
+  socket.on('p:move', onPlayerMove)
+  socket.on('disconnect', onDisconnect)
 })
 
-// Preparamos el refresco de la logica para que se ejecute unas 20 veces por segundo (cada 50 ms)
+// Ejecutamos la logica del juego x veces por segundo
 setInterval(function () {
-    for (let gameId in games) {
-        const game = games[gameId]
-        game.logic()
-    }
-}, 50)
+  for (let gameId in games) {
+    const game = games[gameId]
+    game.logic()
+  }
+}, serverConf.LOGIC_FREQ)
 
-// Ponemos a la escucha el servidor (http y sockets)
-http.listen(process.env.PORT || conf.PORT, function () {
-  console.log('listening on *:' + conf.PORT)
+// Ponemos a la escucha el servidor
+const PORT_IN_USE = process.env.PORT || serverConf.PORT
+http.listen(PORT_IN_USE, function () {
+  console.log('listening on *:' + PORT_IN_USE)
 })
