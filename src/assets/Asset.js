@@ -10,6 +10,8 @@ class Asset {
     this.y = 0
     this.vx = 0
     this.vy = 0
+    this.ax = 0
+    this.ay = 0
   }
 
     /**

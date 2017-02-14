@@ -1,4 +1,5 @@
 const Entity = require('./Entity.js')
+const { ACCEL } = require('../config.js')
 
 class Player extends Entity {
   constructor (socket) {
@@ -26,6 +27,36 @@ class Player extends Entity {
     this.exp = 0
   }
 
+  /**
+   * Actualiza los inputs recibidos por el jugador
+   */
+  updateInputs (inputs) {
+    this.updateMoves() // Actualizamos la posicion/accion del personaje
+    this.inputs = inputs // Seteamos los inputs
+    this.calculateAcceleration() // Calculamos la nueva aceleracion del personaje
+  }
+
+  /**
+   * Calcula la aceleracion del jugador en funcion
+   * de los inputs activos
+   */
+  caclulateAcceleration () {
+    const inputs = this.inputs
+    let ax = 0
+    let ay = 0
+    if (inputs.LEFT_ARROW) ax -= ACCEL
+    if (inputs.RIGHT_ARROW) ax += ACCEL
+    if (inputs.UP_ARROW) ay -= ACCEL
+    if (inputs.DOWN_ARROW) ay += ACCEL
+
+    this.ax = ax
+    this.ay = ay
+  }
+
+  updateMoves() {
+
+  }
+  
   /**
    * Ejecutamos la logica del jugador, entre otros los inputs recibidos
    * Despues ejecutamos "moveEntity" para que se aplique la logica
