@@ -20,9 +20,8 @@ class Entity extends Asset {
   /**
    * Calculamos las nuevas posiciones de los elementos
    * @param numeric delta
-   * @param numeric vInc incremento del asset en este movimiento (ACCEL * DELTA)
    */
-  logic (delta, vInc) {
+  logic (delta) {
     // super.logic(delta, vInc)
   }
 

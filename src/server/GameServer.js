@@ -31,7 +31,7 @@ class GameServer extends Game {
     let players = this.players
     let items = this.items
 
-        // Enviamos al nuevo jugador los datos de la partida al jugador
+        // Enviamos al nuevo jugador los datos de la partida
     socket.emit('world:refresh', socket.id, {
       map, players, items
     })

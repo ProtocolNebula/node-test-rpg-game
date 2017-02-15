@@ -37,33 +37,36 @@ class Player extends Entity {
   }
 
   /**
-   * Calcula la aceleracion del jugador en funcion
-   * de los inputs activos
+   * Calcula la aceleracion que deberia tener 
+   * el personaje en funcion de los inputs activos
    */
-  caclulateAcceleration () {
+  /*caclulateAcceleration () {
     const inputs = this.inputs
+    
     let ax = 0
     let ay = 0
-    if (inputs.LEFT_ARROW) ax -= ACCEL
-    if (inputs.RIGHT_ARROW) ax += ACCEL
-    if (inputs.UP_ARROW) ay -= ACCEL
-    if (inputs.DOWN_ARROW) ay += ACCEL
+
+    // Cantidad de desplazamiento Izquierda / Derecha (con friccion)
+    if (inputs.LEFT_ARROW) this.ax = -ACCEL
+    else if (inputs.RIGHT_ARROW) this.ax = ACCEL
+    else if (this.vx > 0) this.vx -= Math.max(0, vInc)
+    else if (this.vx < 0) this.vx += Math.min(0, vInc)
+
+    // Cantidad de desplazamiento Arriba / Abajo (con friccion)
+    if (inputs.UP_ARROW) this.vy -= vInc
+    else if (inputs.DOWN_ARROW) this.vy += vInc
 
     this.ax = ax
     this.ay = ay
-  }
-
-  updateMoves() {
-
-  }
+  }*/
   
   /**
-   * Ejecutamos la logica del jugador, entre otros los inputs recibidos
+   * TODO: Optimizar funcion
+   * Ejecutamos la logica del jugador, entre otros las acciones de los inputs recibidos
    * Despues ejecutamos "moveEntity" para que se aplique la logica
    * @param numeric delta
-   * @param numeric vInc incremento del asset en este movimiento (ACCEL * DELTA)
    */
-  logic (delta, vInc) {
+  logic (delta) {
     super.logic(delta, vInc)
     const inputs = this.inputs
 
@@ -75,11 +78,18 @@ class Player extends Entity {
     else if (this.vx > 0) this.vx -= Math.max(0, vInc)
     else if (this.vx < 0) this.vx += Math.min(0, vInc)
 
+
     // Cantidad de desplazamiento Arriba / Abajo (con friccion)
     if (inputs.UP_ARROW) this.vy -= vInc
-    if (inputs.DOWN_ARROW) this.vy += vInc
+    else if (inputs.DOWN_ARROW) this.vy += vInc
     else if (this.vy > 0) this.vy -= Math.max(0, vInc)
     else if (this.vy < 0) this.vy += Math.min(0, vInc)
+
+    if (this.vx < -MAX_ACCEL) this.vx = -MAX_ACCEL
+    else if (this.vx > MAX_ACCEL) this.vx = MAX_ACCEL
+
+    if (this.vy < -MAX_ACCEL) this.vy = -MAX_ACCEL
+    else if (this.vy > MAX_ACCEL) this.vy = MAX_ACCEL
 
     // Ejecutamos el movimiento del player
     super.moveEntity(delta, vInc)

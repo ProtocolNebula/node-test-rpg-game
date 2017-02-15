@@ -20,28 +20,30 @@ class Game {
      * El servidor o el cliente pueden requerir algunas acciones adicionales
      */
     logic() {
-        // Calculamos el timepo delta (el que ha pasado entre ahora y el ultimo refresco)
+        // Calculamos el tiempo delta (el que ha pasado entre ahora y el ultimo refresco)
         const now = Date.now()
         const delta = now - this.lastLogic
-        this.lastLogic = now
+        //this.lastLogic = now
 
         // Ejecutamos la logica de los jugadores
-        this.logicFor(this.players, Conf.ACCEL * delta)
+        //this.logicFor(this.players, ACCEL * delta)
+        this.logicFor(this.players, delta)
 
         // Ejecutamos la logica de los mobs
-        this.logicFor(this.mobs, CONF.MOB_ACCEL * delta)
+        //this.logicFor(this.mobs, ACCEL * delta)
+        this.logicFor(this.mobs, delta)
     }
 
     /**
      * Ejecuta la logica de assets genericos (jugadores, mobs...)
      * @param Asset[] listItems Listado de assets a ejecutar su logica
-     * @param numeric vInc incremento del elemento en el desplazamiento (opcional)
+     * @param numeric delta Delta time
      */
-    logicFor(listItems, vInc) {
+    logicFor(listItems, delta) {
         if (listItems.lenght > 0) {
             for (let id in listItems) {
                 const asset = listItems[id]
-                asset.logic(delta, vInc)
+                asset.logic(delta)
             }
         }
     }
