@@ -29,6 +29,7 @@
   "homepage": "https://github.com/ProtocolNebula/node-test-rpg-game#readme",
   "dependencies": {
     "@dasilvacontin/keyboard": "^1.0.2",
+    "capitalize": "^1.0.0",
     "deep-equal": "^1.0.1",
     "express": "^4.14.1",
     "randomcolor": "^0.4.4",

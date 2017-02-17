@@ -11,14 +11,14 @@ const ctx = canvas.getContext('2d')
 
 // Cargamos el ID de la partida
 const gameId = window.location.pathname
-const game = new GameClient(gameid)
+const game = new GameClient(gameId)
 
 // Loop principal del juego
-function mainLoop() {
+function mainLoop () {
     // Solicitamos al proximo frame la carga de esta funcioin
-    requestAnimationFrame(mainLoop)
-    game.logic()
-    game.render(canvas, ctx)
+  requestAnimationFrame(mainLoop)
+  game.logic()
+  game.render(canvas, ctx)
 }
 
 // Iniciamos el loop

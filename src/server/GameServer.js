@@ -32,7 +32,7 @@ class GameServer extends Game {
     let items = this.items
 
         // Enviamos al nuevo jugador los datos de la partida
-    socket.emit('world:refresh', socket.id, {
+    socket.emit('gRefresh', socket.id, {
       map, players, items
     })
 
@@ -48,7 +48,7 @@ class GameServer extends Game {
     const player = this.players[socket.id]
     player.timestamp = Date.now()
     player.inputs = inputs
-    this.io.to(this.room).emit('playerMoved', player)
+    this.io.to(this.room).emit('pMove', player)
   }
 
     /**
@@ -57,7 +57,7 @@ class GameServer extends Game {
   onPlayerDisconnected (socket) {
     console.log(`${socket.id} disconnected from game ${this.room}`)
     delete this.players[socket.id]
-    socket.to(this.roomId).broadcast.emit('playerDisconnected', socket.id)
+    socket.to(this.roomId).broadcast.emit('pDiscon', socket.id)
   }
 
     /**
@@ -69,7 +69,7 @@ class GameServer extends Game {
 
   logic () {
     // Para optimizar recursos solo lo ejecutaremos si hay jugadores ?
-    //if (this.players > 0) 
+    // if (this.players > 0)
     super.logic()
   }
 }

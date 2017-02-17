@@ -1,5 +1,5 @@
 const Entity = require('./Entity.js')
-const { ACCEL } = require('../config.js')
+const { ACCEL, MAX_ACCEL } = require('../config.js')
 
 class Player extends Entity {
   constructor (socket) {
@@ -37,12 +37,12 @@ class Player extends Entity {
   }
 
   /**
-   * Calcula la aceleracion que deberia tener 
+   * Calcula la aceleracion que deberia tener
    * el personaje en funcion de los inputs activos
    */
-  /*caclulateAcceleration () {
+  /* caclulateAcceleration () {
     const inputs = this.inputs
-    
+
     let ax = 0
     let ay = 0
 
@@ -58,8 +58,8 @@ class Player extends Entity {
 
     this.ax = ax
     this.ay = ay
-  }*/
-  
+  } */
+
   /**
    * TODO: Optimizar funcion
    * Ejecutamos la logica del jugador, entre otros las acciones de los inputs recibidos
@@ -67,6 +67,7 @@ class Player extends Entity {
    * @param numeric delta
    */
   logic (delta) {
+    const vInc = ACCEL * delta
     super.logic(delta, vInc)
     const inputs = this.inputs
 
@@ -77,7 +78,6 @@ class Player extends Entity {
     else if (inputs.RIGHT_ARROW) this.vx += vInc
     else if (this.vx > 0) this.vx -= Math.max(0, vInc)
     else if (this.vx < 0) this.vx += Math.min(0, vInc)
-
 
     // Cantidad de desplazamiento Arriba / Abajo (con friccion)
     if (inputs.UP_ARROW) this.vy -= vInc

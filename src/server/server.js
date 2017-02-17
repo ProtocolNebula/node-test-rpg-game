@@ -23,7 +23,7 @@ const gameForPlayer = {} // socket.id => game
  * HOOKS DEL SOCKET
  */
 // Hook de asignacion de sala
-function onJoinRoom(room) {
+function onJoinRoom (room) {
   const socket = this
   let game = games[room]
 
@@ -41,15 +41,15 @@ function onJoinRoom(room) {
 /**
  * Recibimos una peticion ping del cliente y devolvemos un pong
  */
-function onGamePing() {
+function onGamePing () {
   const socket = this
-  socket.emit('game:pong', Date.now())
+  socket.emit('sPong', Date.now())
 }
 
 /**
  * Movimiento del jugador
  */
-function onPlayerMove() {
+function onPlayerMove (inputs) {
   const socket = this
   const game = gameForPlayer[socket.id]
   if (game != null) game.onPlayerMoved(socket, inputs)
@@ -58,7 +58,7 @@ function onPlayerMove() {
 /**
  * Desconexion del jugador
  */
-function onDisconnect() {
+function onDisconnect () {
   const socket = this
   const game = gameForPlayer[socket.id]
   if (game != null) game.onPlayerDisconnected(socket)
@@ -66,13 +66,13 @@ function onDisconnect() {
 
 // Escuchas del socket
 io.on('connection', function (socket) {
-    // El jugador solicita entrar a una sala
+  // El jugador solicita entrar a una sala
   socket.on('joinRoom', onJoinRoom)
-  socket.on('game:ping', onGamePing)
-  /*socket.on('game:pung', () => {
+  socket.on('sPing', onGamePing)
+  /* socket.on('game:pung', () => {
         // Recibimos el "pong" del cliente
-  })*/
-  socket.on('p:move', onPlayerMove)
+  }) */
+  socket.on('pMove', onPlayerMove)
   socket.on('disconnect', onDisconnect)
 })
 
