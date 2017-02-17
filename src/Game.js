@@ -23,6 +23,7 @@ class Game {
         // Calculamos el tiempo delta (el que ha pasado entre ahora y el ultimo refresco)
     const now = Date.now()
     const delta = now - this.lastLogic
+    this.lastLogic = now
         // this.lastLogic = now
 
         // Ejecutamos la logica de los jugadores

@@ -47,7 +47,9 @@ class GameServer extends Game {
      */
   onPlayerMove (socket, inputs) {
     const player = this.players[socket.id]
-    player.timestamp = Date.now()
+    const now = Date.now()
+    player.logic(player.timestamp - now)
+    player.timestamp = now
     player.inputs = inputs
     this.emitPlayer(player)
   }

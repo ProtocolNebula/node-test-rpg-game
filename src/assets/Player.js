@@ -1,5 +1,5 @@
 const Entity = require('./Entity.js')
-const { ACCEL, MAX_ACCEL } = require('../config.js')
+const { ACCEL, MAX_SPEED } = require('../config.js')
 
 class Player extends Entity {
   constructor (id, name) {
@@ -73,6 +73,7 @@ class Player extends Entity {
    */
   logic (delta) {
     const vInc = ACCEL * delta
+    console.log(delta)
     super.logic(delta, vInc)
     const inputs = this.inputs
 
@@ -81,20 +82,20 @@ class Player extends Entity {
     // Cantidad de desplazamiento Izquierda / Derecha (con friccion)
     if (inputs.LEFT_ARROW) this.vx -= vInc
     else if (inputs.RIGHT_ARROW) this.vx += vInc
-    else if (this.vx > 0) this.vx -= Math.max(0, vInc)
-    else if (this.vx < 0) this.vx += Math.min(0, vInc)
+    else if (this.vx > 0) this.vx = Math.max(0, this.vx - vInc)
+    else if (this.vx < 0) this.vx = Math.min(0, this.vx + vInc)
 
     // Cantidad de desplazamiento Arriba / Abajo (con friccion)
     if (inputs.UP_ARROW) this.vy -= vInc
     else if (inputs.DOWN_ARROW) this.vy += vInc
-    else if (this.vy > 0) this.vy -= Math.max(0, vInc)
-    else if (this.vy < 0) this.vy += Math.min(0, vInc)
+    else if (this.vy > 0) this.vy = Math.max(0, this.vy - vInc)
+    else if (this.vy < 0) this.vy = Math.min(0, this.vy + vInc)
 
-    if (this.vx < -MAX_ACCEL) this.vx = -MAX_ACCEL
-    else if (this.vx > MAX_ACCEL) this.vx = MAX_ACCEL
+    if (this.vx < -MAX_SPEED) this.vx = -MAX_SPEED
+    else if (this.vx > MAX_SPEED) this.vx = MAX_SPEED
 
-    if (this.vy < -MAX_ACCEL) this.vy = -MAX_ACCEL
-    else if (this.vy > MAX_ACCEL) this.vy = MAX_ACCEL
+    if (this.vy < -MAX_SPEED) this.vy = -MAX_SPEED
+    else if (this.vy > MAX_SPEED) this.vy = MAX_SPEED
 
     // Ejecutamos el movimiento del player
     this.moveEntity(delta)

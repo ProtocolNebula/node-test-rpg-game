@@ -31,7 +31,9 @@ class Entity extends Asset {
    * @param numeric vInc incremento del asset en este movimiento (ACCEL * DELTA)
    */
   moveEntity (delta, vInc) {
+    
     this.x += this.vx
+    console.log(this.x + ' - ' + this.vx)
     this.y += this.vy
   }
 
