@@ -38,6 +38,7 @@
   "devDependencies": {
     "browserify": "^14.0.0",
     "chokidar-cli": "^1.2.0",
-    "standard": "^8.6.0"
+    "standard": "^8.6.0",
+    "watchify": "^3.9.0"
   }
 }

@@ -29,7 +29,7 @@ class GameClient extends Game {
     // Eventos que nos envia el servidor (se creara solo un hook a cada uno)
     // p: player | g: game
     const serverEventsNames = [
-      'connect', 'gRefresh', 'sPong',
+      'connect', 'gRefresh', 'gPong',
       'pMove', 'pDiscon'
     ]
 
@@ -48,13 +48,13 @@ class GameClient extends Game {
    */
   pingServer () {
     this.pingMessageTimestamp = Date.now()
-    this.socket.emit('gamePing')
+    this.socket.emit('gPing')
   }
 
   /**
    * Respuesta PONG del servidor
    */
-  onSPong (serverNow) {
+  onGPong (serverNow) {
     const now = Date.now()
     this.ping = (now - this.pingMessageTimestamp) / 2
     this.clockDiff = (serverNow + this.ping) - now
@@ -77,11 +77,23 @@ class GameClient extends Game {
   onGRefresh (myPlayerId, gameState) {
     this.myPlayerId = myPlayerId
     const { players } = gameState
-    this.players = players
+
+    for (let player in players) {
+      player = players[player]
+      this.players[player.id] = new Player(player.id, player.name)
+      this.players[player.id].updatePlayer(player)
+    }
   }
 
   onPMove (player) {
-    this.players[player.id] = player
+    let p = this.players[player.id]
+    console.log(p)
+    if (!p) {
+      p = new Player(player.id, player.name)
+      this.players[p.id] = p
+    }
+
+    p.updatePlayer(player)
   }
 
   onPDiscon (playerId) {
@@ -97,7 +109,7 @@ class GameClient extends Game {
     }
 
     if (!deepEqual(myInputs, oldInputs)) {
-      this.socket.emit('playerMove', myInputs)
+      this.socket.emit('pMove', myInputs)
 
       // update our local player' inputs aproximately when
       // the server takes them into account
@@ -106,7 +118,7 @@ class GameClient extends Game {
         const myPlayer = this.players[this.myPlayerId]
         const now = Date.now()
         const serverNow = now + this.clockDiff
-        this.updatePlayer(myPlayer, serverNow - myPlayer.timestamp)
+        myPlayer.updatePlayer(myPlayer, serverNow - myPlayer.timestamp)
         myPlayer.inputs = frozenInputs
         // calculatePlayerAcceleration(myPlayer)
       }, this.ping)

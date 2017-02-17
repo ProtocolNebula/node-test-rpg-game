@@ -2,11 +2,10 @@ const Entity = require('./Entity.js')
 const { ACCEL, MAX_ACCEL } = require('../config.js')
 
 class Player extends Entity {
-  constructor (socket) {
-    super(socket.id) // Asignamos el nombre
-
+  constructor (id, name) {
+    super(name) // Asignamos el nombre
     // Server and actions
-    this.id = socket.id
+    this.id = id
     this.inputs = {
       LEFT_ARROW: false,
       RIGHT_ARROW: false,
@@ -34,6 +33,12 @@ class Player extends Entity {
     this.updateMoves() // Actualizamos la posicion/accion del personaje
     this.inputs = inputs // Seteamos los inputs
     this.calculateAcceleration() // Calculamos la nueva aceleracion del personaje
+  }
+
+  updatePlayer (player) {
+    for (let k in player) {
+      this[k] = player[k]
+    }
   }
 
   /**
@@ -92,7 +97,7 @@ class Player extends Entity {
     else if (this.vy > MAX_ACCEL) this.vy = MAX_ACCEL
 
     // Ejecutamos el movimiento del player
-    super.moveEntity(delta, vInc)
+    this.moveEntity(delta)
   }
 
   getDamage (fromObj) {

@@ -24,7 +24,7 @@ class GameServer extends Game {
 
         // Añadimos al jugador a la sala (socket io y servidor)
     socket.join(this.room)
-    let player = new Player(socket)
+    let player = new Player(socket.id, socket.id)
     this.players[socket.id] = player
 
     let map = this.map
@@ -37,17 +37,22 @@ class GameServer extends Game {
     })
 
         // Forzamos el movimiento para que se refresque en todos los clientes
-    this.onPlayerAction(socket, player)
+    // this.onPlayerAction(socket, player)
+    this.emitPlayer(player)
   }
 
     /**
      * El usuario ha pulsado algo, guardaremos los inputs y el momento actual,
      * ademas de avisar a los clientes
      */
-  onPlayerAction (socket, inputs) {
+  onPlayerMove (socket, inputs) {
     const player = this.players[socket.id]
     player.timestamp = Date.now()
     player.inputs = inputs
+    this.emitPlayer(player)
+  }
+
+  emitPlayer (player) {
     this.io.to(this.room).emit('pMove', player)
   }
 

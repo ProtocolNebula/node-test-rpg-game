@@ -40,7 +40,7 @@ class Game {
      * @param numeric delta Delta time
      */
   logicFor (listItems, delta) {
-    if (listItems.lenght > 0) {
+    if (listItems) {
       for (let id in listItems) {
         const asset = listItems[id]
         asset.logic(delta)

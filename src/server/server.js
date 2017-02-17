@@ -10,7 +10,7 @@ const serverConf = require('./serverConfig.js')
 app.use(express.static('public'))
 
 app.get('/:gameId', function (req, res) {
-  res.sendFile(path.join(__dirname, '/../public/index.html'))
+  res.sendFile(path.join(__dirname, '../public/index.html'))
 })
 
 // Lista con las salas de juegos
@@ -24,6 +24,8 @@ const gameForPlayer = {} // socket.id => game
  */
 // Hook de asignacion de sala
 function onJoinRoom (room) {
+  if (room === null) room = 'default'
+
   const socket = this
   let game = games[room]
 
@@ -43,7 +45,7 @@ function onJoinRoom (room) {
  */
 function onGamePing () {
   const socket = this
-  socket.emit('sPong', Date.now())
+  socket.emit('gPong', Date.now())
 }
 
 /**
@@ -52,7 +54,7 @@ function onGamePing () {
 function onPlayerMove (inputs) {
   const socket = this
   const game = gameForPlayer[socket.id]
-  if (game != null) game.onPlayerMoved(socket, inputs)
+  if (game != null) game.onPlayerMove(socket, inputs)
 }
 
 /**
@@ -68,7 +70,7 @@ function onDisconnect () {
 io.on('connection', function (socket) {
   // El jugador solicita entrar a una sala
   socket.on('joinRoom', onJoinRoom)
-  socket.on('sPing', onGamePing)
+  socket.on('gPing', onGamePing)
   /* socket.on('game:pung', () => {
         // Recibimos el "pong" del cliente
   }) */
